@@ -1,6 +1,5 @@
 CC = gcc -g -lm
 CFLAGS= -Wall -Wextra -Werror
-QMAKE_PATH = qmake
 OPEN= open
 TEST_FLAGS = -lcheck 
 OS= $(shell uname)

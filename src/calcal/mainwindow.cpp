@@ -52,7 +52,8 @@ MainWindow::~MainWindow() { delete ui; }
 void MainWindow::on_push_button_clicked(char *polish, t_signes *stack,
                                         t_numbers *stk, char *new_data,
                                         double a, double b, double h) {
-  if (a < b && (b - a) >= h && fabs(h) > 1e-300 && ui->result_show->text() != "ERROR") {
+  if (a < b && (b - a) >= h && fabs(h) > 1e-300 &&
+      ui->result_show->text() != "ERROR") {
     gr = new Graph(this);
     gr->setModal(true);
     gr->show();
@@ -94,7 +95,7 @@ void MainWindow::digits_numbers() {
       all_numbers = (ui->result_show->text() + txt);
       if (txt == "sin" || txt == "cos" || txt == "tan" || txt == "atan" ||
           txt == "acos" || txt == "asin" || txt == "ln" || txt == "log" ||
-          txt == "sqrt" || txt == "^") {
+          txt == "sqrt") {
         all_numbers += "(";
       }
       ui->result_show->setText(all_numbers);
@@ -114,45 +115,69 @@ void MainWindow::digits_numbers() {
   } else if (ui->result_show->text().isEmpty() == false) {
     QString input(ui->result_show->text());
     std::string str = input.toStdString();
-    char data[255] = {'\0'};
-    strcpy(data, str.c_str());
-    char new_data[NMAX] = {'\0'}, polish[NMAX] = {'\0'};
+    int flag_d = 0, flag_nd = 0, flag_pl = 0;
+    char *data = (char *)calloc(sizeof(char), NMAX);
+    char *new_data = (char *)calloc(sizeof(char), NMAX);
+    char *polish = (char *)calloc(sizeof(char), NMAX * 2);
+    if (data) {
+      strcpy(data, str.c_str());
+      flag_d = 1;
+    }
     t_signes stack;
     t_numbers stk;
     init_signes(&stack);
-    change_str(data, new_data);
-    if (!check_data(new_data)) {
-      if (txt == "=") {
-        if (ui->result_show->text().contains("x")) {
-          if (ui->lineEdit_print_x->text().isEmpty() == false) {
-            create_result(polish, &stack, &stk, new_data,
-                          ui->lineEdit_print_x->text().toDouble());
-            ui->lineEdit_print_x->setStyleSheet("border: 2px solid gray");
+    if (new_data && flag_d) {
+      change_str(data, new_data);
+      flag_nd = 1;
+    }
+    if (polish) flag_pl = 1;
+    if (flag_d && flag_nd && flag_pl) {
+      if (!check_data(new_data)) {
+        if (txt == "=") {
+          if (ui->result_show->text().contains("x")) {
+            if (ui->lineEdit_print_x->text().isEmpty() == false) {
+              create_result(polish, &stack, &stk, new_data,
+                            ui->lineEdit_print_x->text().toDouble());
+              ui->lineEdit_print_x->setStyleSheet("border: 2px solid gray");
+            }
+          } else if (ui->result_show->text().contains("x") == false) {
+            create_result(polish, &stack, &stk, new_data, 0);
           }
-        } else if (ui->result_show->text().contains("x") == false) {
-          create_result(polish, &stack, &stk, new_data, 0);
-        }
-      } else if (txt == "graph") {
-        if (ui->lineEdit_start->text().isEmpty() == false &&
-            ui->lineEdit_end->text().isEmpty() == false &&
-            ui->lineEdit_step->text().isEmpty() == false) {
-          double a = ui->lineEdit_start->text().toDouble();
-          double b = ui->lineEdit_end->text().toDouble();
-          double h = ui->lineEdit_step->text().toDouble();
-          if (a < b && h < (b - a)) {
-            on_push_button_clicked(polish, &stack, &stk, new_data, a, b, h);
+        } else if (txt == "graph") {
+          if (ui->lineEdit_start->text().isEmpty() == false &&
+              ui->lineEdit_end->text().isEmpty() == false &&
+              ui->lineEdit_step->text().isEmpty() == false) {
+            double a = ui->lineEdit_start->text().toDouble();
+            double b = ui->lineEdit_end->text().toDouble();
+            double h = ui->lineEdit_step->text().toDouble();
+            if (a < b && h < (b - a)) {
+              on_push_button_clicked(polish, &stack, &stk, new_data, a, b, h);
+            }
+          } else if (ui->lineEdit_start->text().isEmpty() == true &&
+                     ui->lineEdit_end->text().isEmpty() == true &&
+                     ui->lineEdit_step->text().isEmpty() == true) {
+            on_push_button_clicked(polish, &stack, &stk, new_data, -10, 10,
+                                   0.01);
           }
-        } else if (ui->lineEdit_start->text().isEmpty() == true &&
-                   ui->lineEdit_end->text().isEmpty() == true &&
-                   ui->lineEdit_step->text().isEmpty() == true) {
-          on_push_button_clicked(polish, &stack, &stk, new_data, -10, 10, 0.01);
         }
+      } else {
+        ui->result_show->setText("ERROR");
       }
     } else {
-      ui->result_show->setText("ERROR");
+      if (!flag_d) free(data);
+      if (!flag_nd) free(new_data);
+      if (!flag_pl) free(polish);
     }
-    ui->lineEdit_print_x->clear();
+    // delete data;
+    // delete new_data;
+    // delete polish;
+    // if (data) {
+    //   delete data;
+    // }
+    // if (new_data) delete new_data;
+    // if (polish) delete polish;
 
+    ui->lineEdit_print_x->clear();
     ui->lineEdit_end->clear();
     ui->lineEdit_start->clear();
     ui->lineEdit_step->clear();
@@ -184,8 +209,6 @@ void MainWindow::clear_C() {
     text.chop(4);
   } else if (text.endsWith("ln(")) {
     text.chop(3);
-  } else if (text.endsWith("^(")) {
-    text.chop(2);
   } else {
     text.chop(1);
   }

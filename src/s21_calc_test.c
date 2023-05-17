@@ -281,6 +281,125 @@ START_TEST(numbers_result_13) {
 }
 END_TEST
 
+START_TEST(numbers_result_14) {
+  char data[NMAX] = "2^sin(x)";
+  char new_data[NMAX] = {'\0'}, polish[NMAX] = {'\0'};
+  t_signes stack;
+  t_numbers stk;
+  init_signes(&stack);
+  change_str(data, new_data);
+  ck_assert_int_eq(check_data(new_data), 0);
+  ck_assert_double_eq_tol(add_result(polish, new_data, &stack, &stk, 0.5),
+                          pow(2, sin(0.5)), 0.0000001);
+}
+END_TEST
+
+START_TEST(numbers_result_15) {
+  char data[NMAX] = "5 mod sin(x)";
+  char new_data[NMAX] = {'\0'}, polish[NMAX] = {'\0'};
+  t_signes stack;
+  t_numbers stk;
+  init_signes(&stack);
+  change_str(data, new_data);
+  ck_assert_int_eq(check_data(new_data), 0);
+  ck_assert_double_eq_tol(add_result(polish, new_data, &stack, &stk, 0.5),
+                          fmod(5, sin(0.5)), 0.0000001);
+}
+END_TEST
+
+START_TEST(numbers_result_16) {
+  char data[NMAX] = "5 mod (7.5 mod 0.5^sin(x))";
+  char new_data[NMAX] = {'\0'}, polish[NMAX] = {'\0'};
+  t_signes stack;
+  t_numbers stk;
+  init_signes(&stack);
+  change_str(data, new_data);
+  ck_assert_int_eq(check_data(new_data), 0);
+  ck_assert_double_eq_tol(add_result(polish, new_data, &stack, &stk, 24),
+                          fmod(5, fmod(7.5, pow(0.5, sin(24)))), 0.0000001);
+}
+END_TEST
+
+START_TEST(numbers_result_17) {
+  char data[NMAX] = "16^2/(+5-1)*(-5+2.5)";
+  char new_data[NMAX] = {'\0'}, polish[NMAX] = {'\0'};
+  t_signes stack;
+  t_numbers stk;
+  init_signes(&stack);
+  change_str(data, new_data);
+  ck_assert_int_eq(check_data(new_data), 0);
+  ck_assert_double_eq_tol(add_result(polish, new_data, &stack, &stk, 0),
+                          pow(16, 2) / 4 * (-2.5), 0.0000001);
+}
+END_TEST
+
+START_TEST(numbers_result_18) {
+  char data[NMAX] = "sin(cos(atan(asin(x))))";
+  char new_data[NMAX] = {'\0'}, polish[NMAX] = {'\0'};
+  t_signes stack;
+  t_numbers stk;
+  init_signes(&stack);
+  change_str(data, new_data);
+  ck_assert_int_eq(check_data(new_data), 0);
+  ck_assert_double_eq_tol(add_result(polish, new_data, &stack, &stk, 0.01),
+                          sin(cos(atan(asin(0.01)))), 0.0000001);
+}
+END_TEST
+
+START_TEST(numbers_result_19) {
+  char data[NMAX] = "53.25 mod 6 mod 7^asin(0.233)";
+  char new_data[NMAX] = {'\0'}, polish[NMAX] = {'\0'};
+  t_signes stack;
+  t_numbers stk;
+  init_signes(&stack);
+  change_str(data, new_data);
+  ck_assert_int_eq(check_data(new_data), 0);
+  ck_assert_double_eq_tol(add_result(polish, new_data, &stack, &stk, 0),
+                          fmod(fmod(53.25, 6), pow(7, asin(0.233))), 0.0000001);
+}
+END_TEST
+
+START_TEST(numbers_result_20) {
+  char data[NMAX] = "2^log(24)/tan(1)";
+  char new_data[NMAX] = {'\0'}, polish[NMAX] = {'\0'};
+  t_signes stack;
+  t_numbers stk;
+  init_signes(&stack);
+  change_str(data, new_data);
+  ck_assert_int_eq(check_data(new_data), 0);
+  ck_assert_double_eq_tol(add_result(polish, new_data, &stack, &stk, 0),
+                          pow(2, log10(24)) / tan(1), 0.0000001);
+}
+END_TEST
+
+START_TEST(numbers_result_21) {
+  char data[NMAX] = "656.2313/17.5+atan(25) + cos(32) mod (75 mod 2.33)";
+  char new_data[NMAX] = {'\0'}, polish[NMAX] = {'\0'};
+  t_signes stack;
+  t_numbers stk;
+  init_signes(&stack);
+  change_str(data, new_data);
+  ck_assert_int_eq(check_data(new_data), 0);
+  ck_assert_double_eq_tol(
+      add_result(polish, new_data, &stack, &stk, 0),
+      656.2313 / 17.5 + atan(25) + fmod(cos(32), fmod(75, 2.33)), 0.0000001);
+}
+END_TEST
+
+START_TEST(numbers_result_22) {
+  char data[NMAX] = "16^2/(+5-1)*(-5+2.5)*36^(-atan(sin(0.25)))";
+  char new_data[NMAX] = {'\0'}, polish[NMAX] = {'\0'};
+  t_signes stack;
+  t_numbers stk;
+  init_signes(&stack);
+  change_str(data, new_data);
+  ck_assert_int_eq(check_data(new_data), 0);
+  ck_assert_double_eq_tol(add_result(polish, new_data, &stack, &stk, 0),
+                          pow(16, 2) / 4 * (-2.5) * pow(36, -atan(sin(0.25))),
+                          0.0000001);
+}
+END_TEST
+
 int main(void) {
   Suite *s = suite_create("Calculator");
   SRunner *sr = srunner_create(s);
@@ -315,7 +434,15 @@ int main(void) {
   tcase_add_test(tc_numbers_result, numbers_result_11);
   tcase_add_test(tc_numbers_result, numbers_result_12);
   tcase_add_test(tc_numbers_result, numbers_result_13);
-
+  tcase_add_test(tc_numbers_result, numbers_result_14);
+  tcase_add_test(tc_numbers_result, numbers_result_15);
+  tcase_add_test(tc_numbers_result, numbers_result_16);
+  tcase_add_test(tc_numbers_result, numbers_result_17);
+  tcase_add_test(tc_numbers_result, numbers_result_18);
+  tcase_add_test(tc_numbers_result, numbers_result_19);
+  tcase_add_test(tc_numbers_result, numbers_result_20);
+  tcase_add_test(tc_numbers_result, numbers_result_21);
+  tcase_add_test(tc_numbers_result, numbers_result_22);
   srunner_run_all(sr, CK_VERBOSE);
   int nf = srunner_ntests_failed(sr);
   srunner_free(sr);

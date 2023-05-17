@@ -7,31 +7,30 @@ double add_result(char *polish, char *new_data, t_signes *stack, t_numbers *stk,
   ;
 }
 double create_stk(char *polish, t_numbers *stk, double x) {
-  // printf("%s", polish);
-
-  size_t i;
+  int len = strlen(polish);
   int j = 0;
-  char num[NMAX];
+  char num[NMAX] = {'\0'};
   init_numbers(stk);
-  if (strlen(polish) == 1) {
+  if (len == 1) {
     num[0] = polish[0];
     if (num[0] != 'x')
       push_numbers(stk, atof(num));
     else
       push_numbers(stk, x);
   } else {
-    for (i = 0; i < strlen(polish); i++) {
+    for (int i = 0; i < len; i++) {
       char c = polish[i];
       if (isnt_digit(c) != 0 && c != '|' && c != '\0') {
         num[j] = polish[i];
         j++;
-        if (i != strlen(polish) - 1) continue;
+        if (i != len - 1) continue;
       }
       if (!(num[0] == '\0')) {
         if (num[0] == 'x')
           push_numbers(stk, x);
-        else
+        else {
           push_numbers(stk, atof(num));
+        }
       }
       calc(c, stk);
       j = 0;
@@ -43,10 +42,7 @@ double create_stk(char *polish, t_numbers *stk, double x) {
 
 int isnt_digit(char c) {
   int flag = 0;
-  if (!(c == '+' || c == '-' || c == '*' || c == '/' || c == '~' || c == '^' ||
-        c == 'h' || c == 'p' || c == 'q' || c == 't' || c == 'k' || c == 'l' ||
-        c == 'a' || c == 'z' || c == 'u' || c == 'd' || c == 'v'))
-    flag++;
+  if (strchr("+-*/~^hpqtklazudv#", c) == NULL) flag++;
   return flag;
 }
 
@@ -66,6 +62,7 @@ void calc(char c, t_numbers *stk) {
     } else {
       a = pop_numbers(stk);
       if (c == '~') push_numbers(stk, a - 2 * a);
+      if (c == '#') push_numbers(stk, a);
       if (c == 'h') push_numbers(stk, sin(a));
       if (c == 'p') push_numbers(stk, cos(a));
       if (c == 'a') push_numbers(stk, fabs(a));

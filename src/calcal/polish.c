@@ -25,7 +25,7 @@ void polish_get(t_signes *stack, char *new_data, char *polish) {
   char c = 0;
   for (int i = 0; i < len; i++) {
     c = new_data[i];
-    if (!(prior(c) && c != '\n')) {
+    if (!(prior(c))) {
       polish[j] = c;
       j++;
     } else {
@@ -46,8 +46,9 @@ void polish_get(t_signes *stack, char *new_data, char *polish) {
         if (stack->top > 0 && prior(c) < prior(stack->sig[stack->top - 1]))
           enter = 1;
       } else {
-        if (stack->top > 0 && prior(c) <= prior(stack->sig[stack->top - 1]))
-          enter = 1;
+        if (stack->top > 0 && prior(c) <= prior(stack->sig[stack->top - 1])) {
+          if (prior(c) != 5) enter = 1;
+        }
       }
       while (stack->top > 0 && enter &&
              prior(c) <= prior(stack->sig[stack->top - 1])) {

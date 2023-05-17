@@ -47,19 +47,19 @@ void Graph::create_graph(char *polish, t_signes *stack, t_numbers *stk,
     if (qIsNaN(y[i]) == false && qIsInf(y[i]) == false) {
       if (y[i] <= minY) {
         minY = y[i];
-          count_mins++;
+        count_mins++;
       }
       if (y[i] >= maxY) {
         maxY = y[i];
-          count_mins++;
+        count_mins++;
       }
     }
   }
   if ((maxY - minY) > 10000 && count_maxes > 1 && count_mins > 1) {
-      double sr = maxY - (maxY - minY) / 2;
-      minY = sr - 10000;
-      maxY = sr + 10000;
-    }
+    double sr = maxY - (maxY - minY) / 2;
+    minY = sr - 10000;
+    maxY = sr + 10000;
+  }
   if (strstr(polish, "t") != NULL) {
     minY = -10;
     maxY = 10;
