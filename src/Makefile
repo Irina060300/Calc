@@ -16,12 +16,13 @@ all: install run
 install: clean
 	cd build && qmake ../calcal/calcal.pro && make
 	mkdir Calculator && mv build/calcal* Calculator
-
+ifeq ($(OS), Linux)
 run: install
-	ifeq ($(OS), Linux)
-		cd Calculator && ./calcal*
-	elif
-		cd Calculator && open calcal*
+	cd Calculator && ./calcal*
+else
+run: install
+	cd Calculator && open calcal*
+endif
 
 dvi: 
 	${OPEN} doc/doc.pdf

@@ -264,7 +264,8 @@ void MainWindow::credit_calculator(double loan, double term, double int_rate,
     emit cred(sum, over_pay, month_pay);
   } else if (calc_type == "differiented") {
     double S_ost = loan;
-    double month_pay_dif[(int)term] = {0}, b = loan / term, p = 0;
+    double month_pay_dif[(int)term], b = loan / term, p = 0;
+    memset( month_pay_dif, 0, (int)term*sizeof(int) );
     for (int i = 0; i < (int)term; i++) {
       p = S_ost * P;
       month_pay_dif[i] = p + b;
