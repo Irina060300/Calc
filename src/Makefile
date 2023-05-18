@@ -18,13 +18,16 @@ install: clean
 	mkdir Calculator && mv build/calcal* Calculator
 
 run: install
-	cd Calculator && ./calcal*
+	ifeq ($(OS), Linux)
+		cd Calculator && ./calcal*
+	elif
+		cd Calculator && open calcal*
 
 dvi: 
 	${OPEN} doc/doc.pdf
 
 dist: install
-	cd build && make dist && mv calcal1.0.0.tar.gz ../
+	cd build && make dist && sed -i.bak "s/--parents//g" Makefile && mv calcal1.0.0.tar.gz ../
 
 uninstall:
 	rm -rf test build/*.* build/calcal* build/Makefile build/.qmake.stash  build/.tmp Calculator

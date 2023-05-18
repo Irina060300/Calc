@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 #include <QDebug>
 #include <QDoubleValidator>
-#include <QRegExp>
+
 extern "C" {
 #include "./../header.h"
 }

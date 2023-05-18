@@ -2,7 +2,7 @@
 #define CREDIT_H
 
 #include <QDialog>
-
+#include <locale.h>
 namespace Ui {
 class Credit;
 }

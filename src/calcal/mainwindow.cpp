@@ -345,8 +345,8 @@ void MainWindow::on_pushButton_pm_clicked() {
     r = r.left(r.length() - 1);
     int len = r.length(), count_left = 0, err = 0, count_right = 0;
     for (int i = 0; i < len; i++) {
-      if (r[i] == "(") count_left++;
-      if (r[i] == ")") count_right++;
+      if (r[i] == '(') count_left++;
+      if (r[i] == ')') count_right++;
       if (count_right > count_left) {
         err = 1;
         break;
