@@ -4,6 +4,7 @@
 extern "C" {
 #endif
 
+#include <locale.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,7 +13,6 @@ extern "C" {
 #define NMAX 300
 #define POLE_HEIGHT 42
 #define POLE_WIDTH 163
-#define M_PI 3.14159265358979323846
 
 typedef struct t_signes {
   char sig[NMAX];

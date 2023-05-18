@@ -187,7 +187,7 @@ int check_x(char *new_data) {
     }
     for (i = 1; i < len - 1; i++) {
       if (new_data[i] == 'x') {
-        if (strchr("+-*/(~^d)", new_data[i - 1]) == NULL) flag++;
+        if (strchr("+-*/(~#^d)", new_data[i - 1]) == NULL) flag++;
         if (strchr("+-*/)^d)", new_data[i + 1]) == NULL) flag++;
       }
     }

@@ -43,7 +43,7 @@ gcov_report: test
 test:
 	${CC} ${CFLAGS} ${TEST_FLAGS} ${GCOV} calcal/*.c s21_calc_test.c -o s21_calc_test
 	./s21_calc_test
-clang-format:
+clang_format:
 	clang-format -n --style=Google *.c *.h calcal/*.c calcal/*.h calcal/*.cpp
 
 valgrind:
@@ -52,5 +52,5 @@ valgrind:
 
 
 
-.PHONY: all install run uninstall clean dvi dist gcov_report test
+.PHONY: all install run uninstall clean dvi dist gcov_report test clang_format clean_test
 

@@ -171,15 +171,6 @@ void MainWindow::digits_numbers() {
       if (!flag_nd) free(new_data);
       if (!flag_pl) free(polish);
     }
-    // delete data;
-    // delete new_data;
-    // delete polish;
-    // if (data) {
-    //   delete data;
-    // }
-    // if (new_data) delete new_data;
-    // if (polish) delete polish;
-
     ui->lineEdit_print_x->clear();
     ui->lineEdit_end->clear();
     ui->lineEdit_start->clear();
