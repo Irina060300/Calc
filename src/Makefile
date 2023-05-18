@@ -6,9 +6,6 @@ OS= $(shell uname)
 
 ifeq ($(OS), Linux)
 	OPEN = firefox
-endif
-
-ifeq ($(OS), Linux)
 	TEST_FLAGS = -lcheck -lpthread -pthread -lrt
 endif
 
@@ -31,7 +28,7 @@ dist: install
 #  && sed -i.bac "s/--parents//g" Makefile
 
 uninstall:
-	rm -rf build/*.* build/calcal* build/Makefile build/.qmake.stash  build/.tmp Calculator
+	rm -rf test build/*.* build/calcal* build/Makefile build/.qmake.stash  build/.tmp Calculator
 
 clean: uninstall
 	rm -rf *.o *.out *.gch *.dSYM *.gcov *.gcda *.bac *.gcno *.a s21_calc_test *.css *.html vgcore* \
@@ -44,7 +41,13 @@ gcov_report: test
 	
 test:
 	${CC} ${CFLAGS} ${TEST_FLAGS} ${GCOV} calcal/*.c s21_calc_test.c -o s21_calc_test
-	./s21_calc_test
+clang-format:
+	clang-format -n --style=Google *.c *.h calcal/*.c calcal/*.h calcal/*.cpp
+
+valgrind:
+	valgrind --tool=memcheck --leak-check=full -s --log-file=test ./s21_calc_test
+	grep errors test
+
 
 
 .PHONY: all install run uninstall clean dvi dist gcov_report test
