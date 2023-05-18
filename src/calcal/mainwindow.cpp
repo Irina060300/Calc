@@ -228,15 +228,15 @@ void MainWindow::input_cr_parametrs() {
   QLocale locale(QLocale::English);
   ui->lineEdit_loan->setFocus();
   ui->lineEdit_input->setText("Enter the credit parametrs:");
-  QRegExp r(
+  QRegularExpression r(
       "^[0-9]{1}(\\.\\d+)$|^[1-9]{1}[0-9]{1}(\\.\\d+)$|^[1-9]{1}[0-9]{1}[0-8]{"
       "1}(\\.\\d+)$|^[1-8]{1}[0-9]{1}[0-9]{1}(\\.\\d+)$|^999$");
-  QRegExp regExp("^[1-9]{1}$|^[1-9]{1}[0-9]{1}$|[1-5]{1}[0-9]{2}$|^600");
-  QRegExpValidator *term_val = new QRegExpValidator(regExp, this);
+  QRegularExpression regExp("^[1-9]{1}$|^[1-9]{1}[0-9]{1}$|[1-5]{1}[0-9]{2}$|^600");
+  QValidator *term_val = new QRegularExpressionValidator(regExp, this);
   ;
   ui->lineEdit_term->setValidator(term_val);
   QDoubleValidator *loan_val = new QDoubleValidator(0, INFINITY, 2);
-  QRegExpValidator *rate_val = new QRegExpValidator(r, this);
+  QValidator *rate_val = new QRegularExpressionValidator(r, this);
 
   loan_val->setLocale(locale);
 
