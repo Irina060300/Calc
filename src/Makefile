@@ -25,12 +25,13 @@ dvi:
 
 dist: install
 	cd build && make dist && mv calcal1.0.0.tar.gz ../
-#  && sed -i.bac "s/--parents//g" Makefile
 
 uninstall:
 	rm -rf test build/*.* build/calcal* build/Makefile build/.qmake.stash  build/.tmp Calculator
 
-clean: uninstall
+clean: uninstall clean_test
+
+clean_test:
 	rm -rf *.o *.out *.gch *.dSYM *.gcov *.gcda *.bac *.gcno *.a s21_calc_test *.css *.html vgcore* \
 	report *.info *.gz *.log
 
@@ -41,6 +42,7 @@ gcov_report: test
 	
 test:
 	${CC} ${CFLAGS} ${TEST_FLAGS} ${GCOV} calcal/*.c s21_calc_test.c -o s21_calc_test
+	./s21_calc_test
 clang-format:
 	clang-format -n --style=Google *.c *.h calcal/*.c calcal/*.h calcal/*.cpp
 

@@ -64,7 +64,7 @@ int check_sin(char *new_data) {
   int len = strlen(new_data);
   for (int i = 1; i < len - 1; i++) {
     if (new_data[i] == 'h') {
-      if (strchr("+-~*/(^d", new_data[i - 1]) == NULL) flag++;
+      if (strchr("+-~*/(^d#", new_data[i - 1]) == NULL) flag++;
     }
   }
   return flag;
@@ -74,7 +74,7 @@ int check_cos(char *new_data) {
   int flag = 0, len = strlen(new_data);
   for (int i = 1; i < len - 1; i++) {
     if (new_data[i] == 'p') {
-      if (strchr("+-~*/(^d", new_data[i - 1]) == NULL) flag++;
+      if (strchr("+-~*/(^d#", new_data[i - 1]) == NULL) flag++;
     }
   }
   return flag;
@@ -84,7 +84,7 @@ int check_log(char *new_data) {
   int flag = 0, len = strlen(new_data);
   for (int i = 1; i < len - 1; i++) {
     if (new_data[i] == 'v') {
-      if (strchr("+-~*/(^d", new_data[i - 1]) == NULL) flag++;
+      if (strchr("+-~*/(^d#", new_data[i - 1]) == NULL) flag++;
     }
   }
   return flag;
@@ -94,7 +94,7 @@ int check_tg(char *new_data) {
   int flag = 0, len = strlen(new_data);
   for (int i = 1; i < len - 1; i++) {
     if (new_data[i] == 't') {
-      if (strchr("+-~*/(^d", new_data[i - 1]) == NULL) flag++;
+      if (strchr("+-~*/(^d#", new_data[i - 1]) == NULL) flag++;
     }
   }
   return flag;
@@ -104,7 +104,7 @@ int check_sqrt(char *new_data) {
   int flag = 0, len = strlen(new_data);
   for (int i = 1; i < len - 1; i++) {
     if (new_data[i] == 'q') {
-      if (strchr("+-~*/(^d", new_data[i - 1]) == NULL) flag++;
+      if (strchr("+-~*/(^d#", new_data[i - 1]) == NULL) flag++;
     }
   }
   return flag;
@@ -114,7 +114,7 @@ int check_ln(char *new_data) {
   int flag = 0, len = strlen(new_data);
   for (int i = 1; i < len - 1; i++) {
     if (new_data[i] == 'l') {
-      if (strchr("+-~*/(^d", new_data[i - 1]) == NULL) flag++;
+      if (strchr("+-~*/(^d#", new_data[i - 1]) == NULL) flag++;
     }
   }
   return flag;
@@ -124,7 +124,7 @@ int check_atan(char *new_data) {
   int flag = 0, len = strlen(new_data);
   for (int i = 1; i < len - 1; i++) {
     if (new_data[i] == 'k') {
-      if (strchr("+-~*/(^d", new_data[i - 1]) == NULL) flag++;
+      if (strchr("+-~*/(^d#", new_data[i - 1]) == NULL) flag++;
     }
   }
   return flag;
@@ -134,7 +134,7 @@ int check_asin(char *new_data) {
   int flag = 0, len = strlen(new_data);
   for (int i = 1; i < len - 1; i++) {
     if (new_data[i] == 'z') {
-      if (strchr("+-~*/(^d", new_data[i - 1]) == NULL) flag++;
+      if (strchr("+-~*/(^d#", new_data[i - 1]) == NULL) flag++;
     }
   }
   return flag;
@@ -144,7 +144,7 @@ int check_acos(char *new_data) {
   int flag = 0, len = strlen(new_data);
   for (int i = 1; i < len - 1; i++) {
     if (new_data[i] == 'u') {
-      if (strchr("+-~*/(^d", new_data[i - 1]) == NULL) flag++;
+      if (strchr("+-~*/(^d#", new_data[i - 1]) == NULL) flag++;
     }
   }
   return flag;

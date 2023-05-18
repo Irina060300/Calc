@@ -52,6 +52,9 @@ MainWindow::~MainWindow() { delete ui; }
 void MainWindow::on_push_button_clicked(char *polish, t_signes *stack,
                                         t_numbers *stk, char *new_data,
                                         double a, double b, double h) {
+  if (ui->result_show->text().contains("x") == false) {
+    create_result(polish, stack, stk, new_data, 0);
+  }
   if (a < b && (b - a) >= h && fabs(h) > 1e-300 &&
       ui->result_show->text() != "ERROR") {
     gr = new Graph(this);

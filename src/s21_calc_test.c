@@ -387,6 +387,19 @@ START_TEST(numbers_result_21) {
 END_TEST
 
 START_TEST(numbers_result_22) {
+  char data[NMAX] = "-sin(x)*(+cos(x))";
+  char new_data[NMAX] = {'\0'}, polish[NMAX] = {'\0'};
+  t_signes stack;
+  t_numbers stk;
+  init_signes(&stack);
+  change_str(data, new_data);
+  ck_assert_int_eq(check_data(new_data), 0);
+  ck_assert_double_eq_tol(add_result(polish, new_data, &stack, &stk, 0.5),
+                          -sin(0.5) * cos(0.5), 0.0000001);
+}
+END_TEST
+
+START_TEST(numbers_result_23) {
   char data[NMAX] = "16^2/(+5-1)*(-5+2.5)*36^(-atan(sin(0.25)))";
   char new_data[NMAX] = {'\0'}, polish[NMAX] = {'\0'};
   t_signes stack;
@@ -443,6 +456,7 @@ int main(void) {
   tcase_add_test(tc_numbers_result, numbers_result_20);
   tcase_add_test(tc_numbers_result, numbers_result_21);
   tcase_add_test(tc_numbers_result, numbers_result_22);
+  tcase_add_test(tc_numbers_result, numbers_result_23);
   srunner_run_all(sr, CK_VERBOSE);
   int nf = srunner_ntests_failed(sr);
   srunner_free(sr);
