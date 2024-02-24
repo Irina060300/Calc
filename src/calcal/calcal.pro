@@ -13,6 +13,7 @@ SOURCES += \
     check_input.c \
     credit.cpp \
     credit_dif.cpp \
+    deposit.cpp \
     graph.cpp \
     input_data.c \
     main.cpp \
@@ -23,6 +24,7 @@ SOURCES += \
 HEADERS += \
     credit.h \
     credit_dif.h \
+    deposit.h \
     graph.h \
     mainwindow.h \
     qcustomplot.h
@@ -30,6 +32,7 @@ HEADERS += \
 FORMS += \
     credit.ui \
     credit_dif.ui \
+    deposit.ui \
     graph.ui \
     mainwindow.ui
 

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 
 #include "./ui_mainwindow.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
@@ -55,21 +56,35 @@ void MainWindow::on_push_button_clicked(char *polish, t_signes *stack,
   if (ui->result_show->text().contains("x") == false) {
     create_result(polish, stack, stk, new_data, 0);
   }
-  if (a < b && (b - a) >= h && fabs(h) > 1e-300 &&
-      ui->result_show->text() != "ERROR") {
-    gr = new Graph(this);
-    gr->setModal(true);
-    gr->show();
-    connect(this, &MainWindow::signal, gr, &Graph::slot);
-    emit signal(polish, stack, stk, new_data, a, b, h);
-    switch (gr->exec()) {
-      case QDialog::Rejected: {
-        ui->lineEdit_start->clear();
-        ui->lineEdit_end->clear();
-        ui->lineEdit_step->clear();
-        break;
-      }
+  if ((a < b) && (b - a) >= h && fabs(h) > 1e-300 &&
+      ui->result_show->text() != "ERROR" && a >= -1000000 && b <= 1000000) {
+    int flag = 0;
+    if ((b - a) / h > 1000000) {
+      flag = 1;
+      QMessageBox msgBox;
+      msgBox.setText("Please decrease step");
+      msgBox.show();
+      msgBox.exec();
     }
+    if (!flag) {
+      ui->lineEdit_start->setStyleSheet("border: 2px solid grey");
+      ui->lineEdit_end->setStyleSheet("border: 2px solid grey");
+      ui->lineEdit_step->setStyleSheet("border: 2px solid grey");
+      gr = new Graph(this);
+      gr->setModal(true);
+      gr->show();
+      connect(this, &MainWindow::signal, gr, &Graph::slot);
+      emit signal(polish, stack, stk, new_data, a, b, h);
+    }
+  } else {
+    ui->lineEdit_start->setStyleSheet("border: 2px solid #F08080");
+    ui->lineEdit_end->setStyleSheet("border: 2px solid #F08080");
+    ui->lineEdit_step->setStyleSheet("border: 2px solid #F08080");
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Warning!!!");
+    msgBox.setText("Input correct parameters");
+    msgBox.show();
+    msgBox.exec();
   }
 }
 
@@ -110,7 +125,7 @@ void MainWindow::digits_numbers() {
           new QDoubleValidator(-INFINITY, INFINITY, 7);
       validator->setLocale(locale);
       ui->lineEdit_print_x->setValidator(validator);
-      ui->lineEdit_print_x->setStyleSheet("border: 2px solid #F08080");
+      ui->lineEdit_print_x->setStyleSheet("border: 2px solid #8ccb5e");
     } else {
       ui->lineEdit_print_x->setStyleSheet("border: 2px solid gray");
     }
@@ -147,20 +162,20 @@ void MainWindow::digits_numbers() {
             create_result(polish, &stack, &stk, new_data, 0);
           }
         } else if (txt == "graph") {
-          if (ui->lineEdit_start->text().isEmpty() == false &&
-              ui->lineEdit_end->text().isEmpty() == false &&
-              ui->lineEdit_step->text().isEmpty() == false) {
+          if (ui->lineEdit_start->text().isEmpty() == true &&
+              ui->lineEdit_end->text().isEmpty() == true &&
+              ui->lineEdit_step->text().isEmpty() == true) {
+            on_push_button_clicked(polish, &stack, &stk, new_data, -10, 10,
+                                   0.01);
+
+          } else if (ui->lineEdit_start->text().isEmpty() == false ||
+                     ui->lineEdit_end->text().isEmpty() == false ||
+                     ui->lineEdit_step->text().isEmpty() == false) {
             double a = ui->lineEdit_start->text().toDouble();
             double b = ui->lineEdit_end->text().toDouble();
             double h = ui->lineEdit_step->text().toDouble();
-            if (a < b && h < (b - a)) {
-              on_push_button_clicked(polish, &stack, &stk, new_data, a, b, h);
-            }
-          } else if (ui->lineEdit_start->text().isEmpty() == true &&
-                     ui->lineEdit_end->text().isEmpty() == true &&
-                     ui->lineEdit_step->text().isEmpty() == true) {
-            on_push_button_clicked(polish, &stack, &stk, new_data, -10, 10,
-                                   0.01);
+
+            on_push_button_clicked(polish, &stack, &stk, new_data, a, b, h);
           }
         }
       } else {
@@ -171,12 +186,7 @@ void MainWindow::digits_numbers() {
       if (!flag_nd) free(new_data);
       if (!flag_pl) free(polish);
     }
-    ui->lineEdit_print_x->clear();
-    ui->lineEdit_end->clear();
-    ui->lineEdit_start->clear();
-    ui->lineEdit_step->clear();
   }
-
   ui->result_show->setMaxLength(255);
 }
 
@@ -222,16 +232,20 @@ void MainWindow::create_result(char *polish, t_signes *stack, t_numbers *stk,
     ui->result_show->setText("ERROR");
 }
 
-void MainWindow::on_Creditcalculator_Changed() { input_cr_parametrs(); }
+void MainWindow::on_Creditcalculator_Changed() {
+  input_cr_parametrs();
+  input_d_parametrs();
+}
 
 void MainWindow::input_cr_parametrs() {
   QLocale locale(QLocale::English);
-  ui->lineEdit_loan->setFocus();
+  // ui->lineEdit_loan->setFocus();
   ui->lineEdit_input->setText("Enter the credit parametrs:");
   QRegularExpression r(
       "^[0-9]{1}(\\.\\d+)$|^[1-9]{1}[0-9]{1}(\\.\\d+)$|^[1-9]{1}[0-9]{1}[0-8]{"
       "1}(\\.\\d+)$|^[1-8]{1}[0-9]{1}[0-9]{1}(\\.\\d+)$|^999$");
-  QRegularExpression regExp("^[1-9]{1}$|^[1-9]{1}[0-9]{1}$|[1-5]{1}[0-9]{2}$|^600");
+  QRegularExpression regExp(
+      "^[1-9]{1}$|^[1-9]{1}[0-9]{1}$|[1-5]{1}[0-9]{2}$|^600");
   QValidator *term_val = new QRegularExpressionValidator(regExp, this);
   ;
   ui->lineEdit_term->setValidator(term_val);
@@ -265,7 +279,7 @@ void MainWindow::credit_calculator(double loan, double term, double int_rate,
   } else if (calc_type == "differiented") {
     double S_ost = loan;
     double month_pay_dif[(int)term], b = loan / term, p = 0;
-    memset( month_pay_dif, 0, (int)term*sizeof(int) );
+    memset(month_pay_dif, 0, (int)term * sizeof(double));
     for (int i = 0; i < (int)term; i++) {
       p = S_ost * P;
       month_pay_dif[i] = p + b;
@@ -363,5 +377,185 @@ void MainWindow::on_pushButton_pm_clicked() {
     } else {
       ui->result_show->setText("-(" + res + ")");
     }
+  }
+}
+
+void MainWindow::input_d_parametrs() {
+  QLocale locale(QLocale::English);
+  QRegularExpression r(
+      "^[0-9]{1}(\\.\\d+)$|^[1-9]{1}[0-9]{1}(\\.\\d+)$|^[1-9]{1}[0-9]{1}[0-8]{"
+      "1}(\\.\\d+)$|^[1-8]{1}[0-9]{1}[0-9]{1}(\\.\\d+)$|^999$");
+  QRegularExpression regExp(
+      "^[1-9]{1}$|^[1-9]{1}[0-9]{1}$|[1-5]{1}[0-9]{2}$|^600");
+  QValidator *term_val = new QRegularExpressionValidator(regExp, this);
+  QDoubleValidator *loan_val = new QDoubleValidator(0, INFINITY, 2);
+  QValidator *rate_val = new QRegularExpressionValidator(r, this);
+  ui->d_term->setValidator(term_val);
+  loan_val->setLocale(locale);
+
+  ui->deposit_amnt->setMaxLength(255);
+  ui->deposit_amnt->setValidator(loan_val);
+  ui->d_rate->setValidator(rate_val);
+
+  ui->d_add->setMaxLength(255);
+  ui->d_add->setValidator(loan_val);
+
+  ui->d_get->setMaxLength(255);
+  ui->d_get->setValidator(loan_val);
+
+  ui->d_nalog->setMaxLength(255);
+  ui->d_nalog->setValidator(loan_val);
+}
+
+void MainWindow::on_d_calc_clicked() {
+  QString dep_amnt_text = ui->deposit_amnt->text(),
+          term_txt = ui->d_term->text(), int_rate_txt = ui->d_rate->text(),
+          kap_type, add_text = ui->d_add->text(), get_text = ui->d_get->text(),
+          nalog_text = ui->d_nalog->text();
+
+  setlocale(LC_NUMERIC, "C");
+  int flag = 0;
+  if (add_text == "") {
+    add_text = "0";
+  }
+  if (get_text == "") {
+    get_text = "0";
+  }
+  if (nalog_text == "") {
+    nalog_text = "0";
+  }
+
+  if (ui->rate_kap->isChecked()) {
+    kap_type = "true";
+    ui->label_10->clear();
+    ui->label_10->setText("Периодичность капитализации");
+  } else {
+    kap_type = "false";
+    ui->label_10->clear();
+    ui->label_10->setText("Периодичность выплат");
+  }
+
+  double dep_amnt = dep_amnt_text.toDouble(), term = term_txt.toDouble(),
+         replenishment = add_text.toDouble(), withdrawals = get_text.toDouble(),
+         int_rate = int_rate_txt.toDouble(), nalog = nalog_text.toDouble();
+  if (dep_amnt > 0)
+    ui->d_amnt_label->clear();
+  else if (dep_amnt == 0) {
+    flag = 1;
+    ui->d_amnt_label->setText("Введите положительное число");
+  }
+  if (term > 600 || term < 1) {
+    ui->d_term_label->setText("Введите значение от 1 до 600");
+    flag = 1;
+  } else if (term > 0) {
+    ui->d_term_label->clear();
+  }
+  if (term_txt.isEmpty() == true) {
+    ui->d_term_label->setText("Введите срок вклада");
+    flag = 1;
+  }
+  if (int_rate_txt == "0" || int_rate_txt.isEmpty() == true || int_rate > 100) {
+    ui->d_rate_label->setText("Введите положительное значение до 100");
+    flag = 1;
+  } else if (term > 0) {
+    ui->d_rate_label->clear();
+  }
+  if ((nalog < 0) || (nalog > 100)) {
+    flag = 1;
+    ui->d_nalog_label->setText("Введите положительное значение до 100");
+  }
+  if (!flag)
+    deposit_calculator(dep_amnt, term, int_rate, replenishment, withdrawals,
+                       kap_type, nalog);
+}
+
+void MainWindow::deposit_calculator(double start_sum, double term,
+                                    double int_rate, double replenishment,
+                                    double withdrawals, QString kap_type,
+                                    double nalog) {
+  QDate start_dttm = ui->dateEdit->date();
+  double summ_dohod = 0, vnos_upd = 0, dohod_prev_nalog = 0, sum_nalog = 0,
+         month_dohod = 0;
+  nalog = 1000000 * nalog / 100;
+
+  int count_months = term;
+  QDate finish_dttm = start_dttm.addMonths(count_months);
+  int add_dttm = ui->dateEdit_2->date().daysTo(finish_dttm),
+      get_dttm = ui->dateEdit_3->date().daysTo(finish_dttm);
+  QString pay_period = ui->pay_periodity->currentText();
+  if (pay_period == "каждый день") {
+    QDate everyDays = start_dttm, everyMonth = start_dttm.addDays(-1);
+    vnos_upd = start_sum;
+    for (int i = 0; i < start_dttm.daysTo(finish_dttm); i++) {
+      double dopVnos = 0;
+      double int_rateInMonth =
+          int_rate / 12 / (everyMonth.daysTo(everyMonth.addMonths(1)));
+      if (i == add_dttm) {
+        dopVnos += replenishment;
+      }
+      if (i == get_dttm) {
+        dopVnos -= withdrawals;
+      }
+      if (kap_type == "true") {
+        vnos_upd += round(vnos_upd * int_rateInMonth) / 100;
+      }
+      summ_dohod += round(vnos_upd * int_rateInMonth) / 100;
+      dohod_prev_nalog += round(vnos_upd * int_rateInMonth) / 100;
+      vnos_upd += dopVnos;
+      if (everyDays.day() == 31 && everyDays.month() == 12 &&
+          dohod_prev_nalog > nalog) {
+        summ_dohod = summ_dohod - (dohod_prev_nalog - nalog) * 0.13;
+        vnos_upd -= (dohod_prev_nalog - nalog) * 0.13;
+        sum_nalog += (dohod_prev_nalog - nalog) * 0.13;
+        dohod_prev_nalog = 0;
+      }
+      if (everyDays.day() == everyMonth.day())
+        everyMonth = everyMonth.addMonths(1);
+      everyDays = everyDays.addDays(1);
+    }
+  }
+  double dopVnos = 0;
+  if (pay_period == "раз в месяц") {
+    QDate everyDays = start_dttm, everyMonth = start_dttm.addDays(-1);
+    vnos_upd = start_sum;
+    for (int i = 0; i < start_dttm.daysTo(finish_dttm); i++) {
+      double int_rateInMonth =
+          int_rate / 12 / (everyMonth.daysTo(everyMonth.addMonths(1)));
+      if (i == add_dttm) {
+        dopVnos += replenishment;
+      }
+      if (i == get_dttm) {
+        dopVnos -= withdrawals;
+      }
+      if (kap_type == "true") {
+        if (everyDays.day() == everyMonth.day()) {
+          vnos_upd += month_dohod;
+          month_dohod = 0;
+        }
+        month_dohod += round(vnos_upd * int_rateInMonth) / 100;
+      }
+      summ_dohod += round(vnos_upd * int_rateInMonth) / 100;
+      dohod_prev_nalog += round(vnos_upd * int_rateInMonth) / 100;
+      vnos_upd += dopVnos;
+      if (everyDays.day() == 31 && everyDays.month() == 12 &&
+          dohod_prev_nalog > nalog) {
+        summ_dohod = summ_dohod - (dohod_prev_nalog - nalog) * 0.13;
+        vnos_upd -= (dohod_prev_nalog - nalog) * 0.13;
+        sum_nalog += (dohod_prev_nalog - nalog) * 0.13;
+        dohod_prev_nalog = 0;
+      }
+      everyDays = everyDays.addDays(1);
+      if (everyDays.day() == everyMonth.day())
+        everyMonth = everyMonth.addMonths(1);
+    }
+  }
+  d_dep = new Deposit(this);
+  d_dep->setModal(true);
+  d_dep->show();
+  connect(this, &MainWindow::dep, d_dep, &Deposit::set_values);
+  if (kap_type == "true") {
+    emit dep(summ_dohod, vnos_upd, sum_nalog);
+  } else {
+    emit dep(summ_dohod, vnos_upd + summ_dohod, sum_nalog);
   }
 }

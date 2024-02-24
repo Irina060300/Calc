@@ -13,22 +13,22 @@ GCOV = -fprofile-arcs -ftest-coverage -fprofile-arcs --coverage
 
 all: install run
 
-install: clean
+install: uninstall
 	cd build && qmake ../calcal/calcal.pro && make
 	mkdir Calculator && mv build/calcal* Calculator
 ifeq ($(OS), Linux)
-run: install
+run:
 	cd Calculator && ./calcal*
 else
-run: install
-	cd Calculator && open calcal*
+run: 
+	cd Calculator/calcal.app/Contents/MacOS/ && ./calcal
 endif
 
 dvi: 
 	${OPEN} doc/doc.pdf
-
-dist: install
-	cd build && make dist && sed -i.bak "s/--parents//g" Makefile && mv calcal1.0.0.tar.gz ../
+ 
+dist:
+	cd build && sed -i.bak "s/--parents//g" Makefile && make dist && mv calcal1.0.0.tar.gz ../
 
 uninstall:
 	rm -rf test build/*.* build/calcal* build/Makefile build/.qmake.stash  build/.tmp Calculator
